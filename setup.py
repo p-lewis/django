@@ -36,7 +36,8 @@ version = __import__('django').get_version()
 
 extensions = [
     Extension('django.core.handlers._handlers', ['django/core/handlers/_handlers.pyx']),
-    Extension('django.http.request', ['django/http/request.pyx'])
+    Extension('django.http.request', ['django/http/request.pyx']),
+    Extension('django.dispatch._dispatcher', ['django/dispatch/_dispatcher.pyx']),
 ]
 
 setup(
