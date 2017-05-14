@@ -1,8 +1,12 @@
 import os
 import sys
-from distutils.sysconfig import get_python_lib
-
 from setuptools import find_packages, setup
+
+from distutils.sysconfig import get_python_lib
+from distutils.extension import Extension
+from Cython.Build import cythonize
+
+# from setuptools import find_packages, setup
 
 # Warn if we are installing over top of an existing installation. This can
 # cause issues where files that were deleted from a more recent Django are
@@ -31,6 +35,10 @@ EXCLUDE_FROM_PACKAGES = ['django.conf.project_template',
 # Dynamically calculate the version based on django.VERSION.
 version = __import__('django').get_version()
 
+extensions = [
+    Extension('django.core.handlers._handlers', ['django/core/handlers/_handlers.pyx']),
+    Extension('django.http.request', ['django/http/request.pyx'])
+]
 
 setup(
     name='Django',
@@ -51,7 +59,9 @@ setup(
     extras_require={
         "bcrypt": ["bcrypt"],
         "argon2": ["argon2-cffi >= 16.1.0"],
+        "cython": ["Cython >= 0.25.2"],
     },
+    ext_modules=cythonize(extensions),
     zip_safe=False,
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

@@ -1,7 +1,8 @@
 from django.http.cookie import SimpleCookie, parse_cookie
 from django.http.request import (
-    HttpRequest, QueryDict, RawPostDataException, UnreadablePostError,
+    HttpRequest, RawPostDataException, UnreadablePostError,
 )
+from django.http.querydict import QueryDict
 from django.http.response import (
     BadHeaderError, FileResponse, Http404, HttpResponse,
     HttpResponseBadRequest, HttpResponseForbidden, HttpResponseGone,

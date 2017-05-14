@@ -58,6 +58,20 @@ class ResolverMatch:
             self.app_names, self.namespaces,
         )
 
+    def update(self, args, kwargs, app_name_to_add, namespace_to_add):
+        self.args = args
+        self.kwargs = kwargs
+
+        if app_name_to_add:
+            self.app_names.insert(0, app_name_to_add)
+            self.app_name = ':'.join(self.app_names)
+
+        if namespace_to_add:
+            self.namespaces.insert(0, namespace_to_add)
+            self.namespace = ':'.join(self.namespaces)
+            view_path = self.url_name or self._func_path
+            self.view_name = ':'.join(self.namespaces + [view_path])
+
 
 @functools.lru_cache(maxsize=None)
 def get_resolver(urlconf=None):
@@ -345,6 +359,11 @@ class RegexURLResolver(LocaleRegexProvider):
             self._populate()
         return name in self._callback_strs
 
+    # def resolve(self, path):
+    #     return self._resolve(str(path))  # path may be a reverse_lazy object
+
+    # @functools.lru_cache(maxsize=256)
+
     def resolve(self, path):
         path = str(path)  # path may be a reverse_lazy object
         tried = []
@@ -372,14 +391,9 @@ class RegexURLResolver(LocaleRegexProvider):
                         if not sub_match_dict:
                             sub_match_args = match.groups() + sub_match.args
 
-                        return ResolverMatch(
-                            sub_match.func,
-                            sub_match_args,
-                            sub_match_dict,
-                            sub_match.url_name,
-                            [self.app_name] + sub_match.app_names,
-                            [self.namespace] + sub_match.namespaces,
-                        )
+                        sub_match.update(sub_match_args, sub_match_dict, self.app_name, self.namespace)
+                        return sub_match
+
                     tried.append([pattern])
             raise Resolver404({'tried': tried, 'path': new_path})
         raise Resolver404({'path': path})
