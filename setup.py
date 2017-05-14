@@ -6,7 +6,6 @@ from distutils.sysconfig import get_python_lib
 from distutils.extension import Extension
 from Cython.Build import cythonize
 
-# from setuptools import find_packages, setup
 
 # Warn if we are installing over top of an existing installation. This can
 # cause issues where files that were deleted from a more recent Django are

@@ -351,29 +351,6 @@ class HttpRequest:
     def readlines(self):
         return list(iter(self))
 
-    # @property
-    # def GET(self):
-    #     return self._GET
-    #
-    # @GET.setter
-    # def GET(self, value):
-    #     self._GET = value
-    #
-    # @property
-    # def POST(self):
-    #     return self._POST
-    #
-    # @POST.setter
-    # def POST(self, value):
-    #     self._POST = value
-    #
-    # @property
-    # def COOKIES(self):
-    #     return self._COOKIES
-    #
-    # def FILES(self):
-    #     return self._FILES
-
 
 def split_domain_port(host):
     """
