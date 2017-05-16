@@ -243,6 +243,8 @@ class RegexURLResolver(LocaleRegexProvider):
         self._callback_strs = set()
         self._populated = False
         self._local = threading.local()
+        # store urls that don't have variable pieces
+        self._simple_url_cache = {}
 
     def __repr__(self):
         if isinstance(self.urlconf_name, list) and len(self.urlconf_name):
@@ -359,13 +361,11 @@ class RegexURLResolver(LocaleRegexProvider):
             self._populate()
         return name in self._callback_strs
 
-    # def resolve(self, path):
-    #     return self._resolve(str(path))  # path may be a reverse_lazy object
-
-    # @functools.lru_cache(maxsize=256)
-
     def resolve(self, path):
         path = str(path)  # path may be a reverse_lazy object
+        simple_match = self._simple_url_cache.get(path)
+        if simple_match:
+            return simple_match
         tried = []
         match = self.regex.search(path)
         if match:
@@ -392,6 +392,8 @@ class RegexURLResolver(LocaleRegexProvider):
                             sub_match_args = match.groups() + sub_match.args
 
                         sub_match.update(sub_match_args, sub_match_dict, self.app_name, self.namespace)
+                        if not (sub_match.args or sub_match.kwargs) and path.startswith('/'):
+                            self._simple_url_cache[path] = sub_match
                         return sub_match
 
                     tried.append([pattern])
